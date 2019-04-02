@@ -1,4 +1,5 @@
 ﻿using Core.Builders;
+using Core.Models;
 using Core.WebElements;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
@@ -10,6 +11,9 @@ namespace Publicity.Pages
 	public class CreateEditContact
 	{
 		private readonly static string inputXpath = "/following-sibling::input";
+
+		public ClickElement Public = new ClickElement(By.XPath("//app-radio-group//li[1]"));
+		public ClickElement ListSpecific = new ClickElement(By.XPath("//app-radio-group//li[2]"));
 
 		//Contact info section
 		public Input FirstName = new Input(By.XPath($"//label[text()='First Name']{inputXpath}"));
@@ -62,6 +66,11 @@ namespace Publicity.Pages
 		public Contact GetContactInfo()
 		{
 			Contact contactDetails = new Contact();
+			if (Public.IsSelected == true)
+			{ contactDetails.ListSpecific = "Public"; }
+			else if (ListSpecific.IsSelected == true)
+			{ contactDetails.ListSpecific = "List Specific"; }
+			else { contactDetails.ListSpecific = string.Empty; }
 			contactDetails.FirstName = FirstName.GetValue;
 			contactDetails.MiddleName = MiddleName.GetValue;
 			contactDetails.LastName = LastName.GetValue;
@@ -109,7 +118,7 @@ namespace Publicity.Pages
 
 		public Contact EnterOnlyRequiredDataForContact()
 		{
-			var rawTestData = JObject.Parse(TestDataFiles.ContactTestData);
+			var rawTestData = JObject.Parse(TestDataLocationReader.ContactTestData);
 			Contact newContact = rawTestData["NewContact"][0].ToObject<Contact>();
 			Contact contactWithReqiredInfo = new ContactBuilder().ContactWithRequiredInfo(newContact).BuildContact();
 			string uniqueName = contactWithReqiredInfo.FirstName + Guid.NewGuid();
@@ -128,10 +137,18 @@ namespace Publicity.Pages
 
 		public Contact EnterAllDataForContact()
 		{
-			var rawTestData = JObject.Parse(TestDataFiles.ContactTestData);
+			var rawTestData = JObject.Parse(TestDataLocationReader.ContactTestData);
 			Contact newContact = rawTestData["NewContact"][0].ToObject<Contact>();
 			Contact contactWithAllInfo = new ContactBuilder().WithContactWithAllInfo(newContact).BuildContact();
-
+			switch (contactWithAllInfo.ListSpecific)
+			{
+				case "Public":
+					Public.Click();
+					break;
+				case "List Specific":
+					ListSpecific.Click();
+					break;
+			};
 			string uniqueName = contactWithAllInfo.FirstName + Guid.NewGuid();
 			FirstName.SetText(uniqueName);
 			MiddleName.SetText(contactWithAllInfo.MiddleName);
@@ -152,7 +169,8 @@ namespace Publicity.Pages
 			Office.SetText(contactWithAllInfo.Office);
 
 			AddressType.SelectByText(contactWithAllInfo.AddressType);
-			Primary.Click();
+			if (contactWithAllInfo.Primary == true)
+			{ Primary.Click(); };
 			POBox.SetText(contactWithAllInfo.POBox);
 			Country.SelectByText(contactWithAllInfo.Country);
 			State.SelectByText(contactWithAllInfo.State);
@@ -174,14 +192,15 @@ namespace Publicity.Pages
 
 		public Contact AddAddressForContact(int index=1)
 		{
-			var rawTestData = JObject.Parse(TestDataFiles.ContactTestData);
+			var rawTestData = JObject.Parse(TestDataLocationReader.ContactTestData);
 			Contact newContact = rawTestData["AdditionalAddress"][0].ToObject<Contact>();
 			Contact contactWithAddress = new ContactBuilder().WithContactAddress(newContact).BuildContact();
 			AddAdditionalAddresses.Click();
 
 			Element addressSection = new Element(By.XPath($"(//app-edit-address)[{index}]"));
 			addressSection.Child<Select>(AddressType.GetSelector()).SelectByText(contactWithAddress.AddressType);
-			addressSection.Child(Primary.GetSelector()).Click();
+			if (contactWithAddress.Primary == true)
+			{ addressSection.Child(Primary.GetSelector()).Click(); }
 			addressSection.Child<Input>(POBox.GetSelector()).SetText(contactWithAddress.POBox);
 			addressSection.Child<Select>(Country.GetSelector()).SelectByText(contactWithAddress.Country);
 			addressSection.Child<Select>(State.GetSelector()).SelectByText(contactWithAddress.State);
@@ -198,7 +217,7 @@ namespace Publicity.Pages
 			Contact contact = new Contact();
 			Element addressSection = new Element(By.XPath($"(//app-edit-address)[{index}]"));
 			contact.AddressType = addressSection.Child<Select>(AddressType.GetSelector()).GetValue;
-			addressSection.Child(Primary.GetSelector()).Click();
+			contact.Primary = addressSection.Child(Primary.GetSelector()).Selected;
 			contact.POBox = addressSection.Child<Input>(POBox.GetSelector()).GetValue;
 			contact.Country = addressSection.Child<Select>(Country.GetSelector()).GetValue;
 			contact.State = addressSection.Child<Select>(State.GetSelector()).GetValue;

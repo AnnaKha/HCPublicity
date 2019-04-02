@@ -1,7 +1,7 @@
 ﻿{
   "NewContact": [
     {
-      "listSpecific": false,
+      "listSpecific": "",
       "firstName": "Test",
       "middleName": "Contact",
       "lastName": "Autotests",

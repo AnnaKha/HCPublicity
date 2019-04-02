@@ -69,15 +69,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BDDAtifacts\ExecutionHooks.cs" />
-    <Compile Include="BDDAtifacts\CreateContact.feature.cs">
+    <Compile Include="BDDSteps\ExecutionHooks.cs" />
+    <Compile Include="BDDFeatures\CreateContact.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CreateContact.feature</DependentUpon>
     </Compile>
-    <Compile Include="BDDAtifacts\CreateContactStepDefinitions.cs" />
-    <Compile Include="BDDAtifacts\SearchStepDefinitions.cs" />
-    <Compile Include="BDDAtifacts\ContactsSearch.feature.cs">
+    <Compile Include="BDDSteps\CreateContactStepDefinitions.cs" />
+    <Compile Include="BDDSteps\SearchStepDefinitions.cs" />
+    <Compile Include="BDDFeatures\ContactsSearch.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ContactsSearch.feature</DependentUpon>
@@ -86,8 +86,7 @@
     <Compile Include="Pages\SearchForContacts.cs" />
     <Compile Include="Tables\ContactsSearchRow.cs" />
     <Compile Include="Tables\ContactsSearchTable.cs" />
-    <Compile Include="TestData\JsonReader.cs" />
-    <Compile Include="TestData\TestDataFiles.cs" />
+    <Compile Include="TestData\TestDataLocationReader.cs" />
     <Compile Include="Tests\Test.cs" />
     <Compile Include="Pages\HomePage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,11 +96,11 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="BDDAtifacts\ContactsSearch.feature">
+    <None Include="BDDFeatures\ContactsSearch.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>ContactsSearch.feature.cs</LastGenOutput>
     </None>
-    <None Include="BDDAtifacts\CreateContact.feature">
+    <None Include="BDDFeatures\CreateContact.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>CreateContact.feature.cs</LastGenOutput>
     </None>

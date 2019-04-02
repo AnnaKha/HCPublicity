@@ -1,4 +1,5 @@
 ﻿using Core.Builders;
+using Core.Models;
 using FluentAssertions;
 using NUnit.Framework;
 using Publicity.Pages;

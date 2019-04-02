@@ -15,11 +15,9 @@ namespace Publicity.Tests
 		[SetUp]
 		public void SetUp()
 		{
-			//driver = Driver.WedDriver;
 			driver.Navigate().GoToUrl(Config.Url);
 			driver.Manage().Window.Maximize();
 			driver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(10);
-			//ngDriver = Driver.Instance;
 			ngDriver.WaitForAngular();
 			ngDriver.Url = driver.Url;
 		}

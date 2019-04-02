@@ -1,4 +1,6 @@
-﻿namespace Core.Builders
+﻿using Core.Models;
+
+namespace Core.Builders
 {
 	public class ContactBuilder 
 	{
@@ -15,6 +17,7 @@
 
 		public ContactBuilder WithContactInfo(Contact contact)
 		{
+			_contact.ListSpecific = contact.ListSpecific;
 			_contact.FirstName = contact.FirstName;
 			_contact.MiddleName = contact.MiddleName;
 			_contact.LastName = contact.LastName;
@@ -26,7 +29,7 @@
 			_contact.MediaType = contact.MediaType;
 			_contact.CompanyWebsite = contact.CompanyWebsite;
 			_contact.Language = contact.Language;
-			_contact.Language = contact.Language;
+			_contact.National = contact.National;
 			return this;
 		}
 
@@ -41,7 +44,7 @@
 		public ContactBuilder WithContactAddress(Contact contact)
 		{
 			_contact.AddressType = contact.AddressType;
-			//_contact.Primary = contact.Primary;
+			_contact.Primary = contact.Primary;
 			_contact.POBox = contact.POBox;
 			_contact.Zip = contact.Zip;
 			_contact.State = contact.State;
@@ -87,6 +90,7 @@
 			_contact.Email = contact.Email;
 			_contact.Mobile = contact.Mobile;
 			_contact.Office = contact.Office;
+			_contact.ListSpecific = contact.ListSpecific;
 			return this;
 		}
 		public Contact BuildContact()

@@ -1,18 +1,24 @@
-﻿using Core.Builders;
+﻿using Core.Models;
 using Core.WebElements;
 using OpenQA.Selenium;
 using Publicity.Tables;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Publicity.Pages
 {
 	public class SearchForContacts
 	{
+		public const string fieldXpath = "(//label[text()='Field'])";
+		public const string valueXpath = "(//label[text()='Value'])";
+		public const string conditionXpath = "(//label[text()='Condition'])";
+
 		public ClickElement AddSearchLineIcon = new ClickElement(By.XPath("//i[contains(@class,'fa-plus-circle')]"));
 		public ClickElement Search = new ClickElement(By.XPath("//button[@type='submit']"));
 		public ClickElement Reset = new ClickElement(By.XPath("//button[@type='reset']"));
 		public ContactsSearchTable ContactsSearch = new ContactsSearchTable(By.TagName("table"));
 		public ClickElement ManageColumns = new ClickElement(By.TagName("app-manage-columns"));
+
 		public void AddOneMoreSearcLine()
 		{
 			AddSearchLineIcon.Click();
@@ -20,9 +26,9 @@ namespace Publicity.Pages
 
 		public void SetSearchLine(int index, string fieldName, string criteria, string conditionValue = "and")
 		{
-			Select field = new Select(By.XPath($"(//label[text()='Field'])[{index}]"));
-			Input value = new Input(By.XPath($"(//label[text()='Value'])[{index}]/following-sibling::input"));
-			Select condition = new Select(By.XPath($"(//label[text()='Condition'])[{index}]"));
+			Select field = new Select(By.XPath($"{fieldXpath}[{index}]"));
+			Input value = new Input(By.XPath($"{valueXpath}[{index}]/following-sibling::input"));
+			Select condition = new Select(By.XPath($"{conditionXpath}[{index}]"));
 			field.SelectByText(fieldName);
 			value.SetText(criteria);
 			condition.SelectByText(conditionValue);
@@ -31,9 +37,9 @@ namespace Publicity.Pages
 
 		public void SetSearchLineForMultiSelectField(int index, string fieldName, string criteria, string conditionValue = "and")
 		{
-			Select field = new Select(By.XPath($"(//label[text()='Field'])[{index}]"));
-			MultiSelect value = new MultiSelect(By.XPath($"(//label[text()='Value'])[{index}]/following-sibling::input"));
-			Select condition = new Select(By.XPath($"(//label[text()='Condition'])[{index}]"));
+			Select field = new Select(By.XPath($"{fieldXpath}[{index}]"));
+			MultiSelect value = new MultiSelect(By.XPath($"{valueXpath}[{index}]/following-sibling::input"));
+			Select condition = new Select(By.XPath($"{conditionXpath}[{index}]"));
 			field.SelectByText(fieldName);
 			value.SetValue(criteria);
 			condition.SelectByText(conditionValue);
@@ -42,9 +48,9 @@ namespace Publicity.Pages
 
 		public void SetSearchLineForNationalField(int index, string fieldName, string criteria, string conditionValue = "and")
 		{
-			Select field = new Select(By.XPath($"(//label[text()='Field'])[{index}]"));
+			Select field = new Select(By.XPath($"{fieldXpath}[{index}]"));
 			ClickElement value = new ClickElement(By.XPath($"//app-radio-group//label[text()=' {criteria} ']/.."));
-			Select condition = new Select(By.XPath($"(//label[text()='Condition'])[{index}]"));
+			Select condition = new Select(By.XPath($"{conditionXpath}[{index}]"));
 			field.SelectByText(fieldName);
 			value.Click();
 			condition.SelectByText(conditionValue);
@@ -53,9 +59,9 @@ namespace Publicity.Pages
 
 		public List<string> GetSearchLine(int index)
 		{
-			Select field = new Select(By.XPath($"(//label[text()='Field'])[{index}]"));
-			Input value = new Input(By.XPath($"(//label[text()='Value'])[{index}]/following-sibling::input"));
-			Select condition = new Select(By.XPath($"(//label[text()='Condition'])[{index}]"));
+			Select field = new Select(By.XPath($"{fieldXpath}[{index}]"));
+			Input value = new Input(By.XPath($"{valueXpath}[{index}]/following-sibling::input"));
+			Select condition = new Select(By.XPath($"{conditionXpath}[{index}]"));
 			List<string> searchCriteria = new List<string>
 			{
 				field.SelectedOption(),
@@ -85,9 +91,18 @@ namespace Publicity.Pages
 			row.Email = ContactsSearch.Rows[index - 1].Email;
 			row.Mobile = ContactsSearch.Rows[index - 1].MobileNumber;
 			row.Office = ContactsSearch.Rows[index - 1].OfficeNumber;
-			/*if (ContactsSearch.Rows[index - 1].ListSpecific == "No")
-			{ row.ListSpecific = false; }
-			else { row.ListSpecific = true; };*/
+			switch (ContactsSearch.Rows[index - 1].ListSpecific)
+			{
+				case "No":
+					row.ListSpecific = "Public";
+					break;
+				case "Yes":
+					row.ListSpecific = "List Specific";
+					break;
+				default:
+					row.ListSpecific = string.Empty;
+					break;
+			};
 			if (row.Mobile == string.Empty)
 			{ row.Mobile = "+___-___-____"; }
 			if (row.Office == string.Empty)
@@ -100,6 +115,20 @@ namespace Publicity.Pages
 			ManageColumns.Click();
 			ClickElement column = new ClickElement(By.XPath($"//div[contains(@class, 'manage-columns-alert')]//div[text()='{columnName}']/ancestor::div[contains(@class, 'manage-columns-alert')]"));
 			column.Child(By.XPath("./following-sibling::div[contains(@class, 'manage-columns-alert')]//input")).Click();
+		}
+
+		public List<string> NameValuesInTable()
+		{
+			return ContactsSearch.Rows.Select(i => i.Name.Text.ToLower()).ToList();
+		}
+
+		public List<string> CompanyValuesInTable()
+		{
+			return ContactsSearch.Rows.Select(i => i.Company.ToLower()).ToList();
+		}
+		public List<string> EmailValuesInTable()
+		{
+			return ContactsSearch.Rows.Select(i => i.Email.ToLower()).ToList();
 		}
 	}
 }

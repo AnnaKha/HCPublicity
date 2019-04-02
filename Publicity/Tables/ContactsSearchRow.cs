@@ -16,8 +16,8 @@ namespace Publicity.Tables
 		public string Email => GetTdText(7);
 		public string MobileNumber => GetTdText(8);
 		public string OfficeNumber => GetTdText(9);
-		public string ListSpecific => GetTdText(10);
-		public string Notes => GetTdText(11);
+		public string Notes => GetTdText(10);
+		public string ListSpecific => GetTdText(11);
 		public IWebElement EditIcon => GetElement(12, ".//i[contains(@class, 'fa-pencil')]");
 		public string National => GetTdText(12);
 	}
